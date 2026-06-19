@@ -9,7 +9,7 @@ public:
 			CloseHandle(this->m_handle);
 	}
 
-	bool setup();
+	bool setup(bool use_usermode_driver);
 	std::optional<uint32_t> get_process_id(const std::string_view& process_name);
 	std::optional<c_address> find_pattern(const std::string_view& module_name, const std::string_view& pattern);
 	std::pair<std::optional<uintptr_t>, std::optional<uintptr_t>> get_module_info(const std::string_view& module_name);
@@ -55,9 +55,14 @@ public:
 private:
 	void* m_handle = nullptr;
 	uint32_t m_id = 0;
+	bool m_use_usermode_driver = false;
+	c_usermode_driver m_usermode_driver;
 
 	bool read_memory(void* address, void* buffer, const size_t size)
 	{
+		if (this->m_use_usermode_driver && this->m_usermode_driver.is_initialized())
+			return this->m_usermode_driver.read_memory(reinterpret_cast<uintptr_t>(address), buffer, size);
+
 		return ReadProcessMemory(this->m_handle, reinterpret_cast<void*>(address), buffer, size, nullptr);
 	}
 };

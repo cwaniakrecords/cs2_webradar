@@ -1,0 +1,44 @@
+name: Usermode CI
+
+on:
+  push:
+    paths:
+      - "usermode/**"
+      - ".github/workflows/usermode-ci.yml"
+  pull_request:
+    paths:
+      - "usermode/**"
+      - ".github/workflows/usermode-ci.yml"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [release, release_privacy]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgJsonGlob: "usermode/vcpkg.json"
+          runVcpkgInstall: true
+
+      - name: Build usermode
+        shell: pwsh
+        run: |
+          msbuild usermode/cs2_webradar.sln /m /p:Configuration=${{ matrix.configuration }} /p:Platform=x64 /bl:usermode/build-${{ matrix.configuration }}.binlog
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: usermode-build-logs-${{ matrix.configuration }}
+          path: usermode/build-${{ matrix.configuration }}.binlog

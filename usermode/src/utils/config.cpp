@@ -2,6 +2,12 @@
 
 bool cfg::setup(config_data_t& config_data)
 {
+#ifdef WEBRADAR_PRIVACY_BUILD
+	config_data.m_use_usermode_driver = true;
+#else
+	config_data.m_use_usermode_driver = false;
+#endif
+
 	std::ifstream file("config.json");
 	if (!file.is_open())
 	{
@@ -9,7 +15,8 @@ bool cfg::setup(config_data_t& config_data)
 
 		std::ofstream example_config("config.json");
 		example_config << std::format("{}", R"({
-    "m_ip": "localhost"
+    "m_ip": "localhost",
+    "m_use_usermode_driver": false
 })");
 
 		return {};
@@ -22,14 +29,23 @@ bool cfg::setup(config_data_t& config_data)
 		return {};
 	}
 
-	try
+	if (!parsed_data.contains("m_ip") || !parsed_data["m_ip"].is_string())
 	{
-		config_data = parsed_data.get<config_data_t>();
-	}
-	catch (const std::exception& e)
-	{
-		LOG_ERROR("failed to deserialize 'config_data_t' (%s)", e.what());
+		LOG_ERROR("failed to deserialize 'config_data_t' (invalid or missing m_ip)");
 		return {};
+	}
+
+	config_data.m_ip = parsed_data["m_ip"].get<std::string>();
+
+	if (parsed_data.contains("m_use_usermode_driver"))
+	{
+		if (!parsed_data["m_use_usermode_driver"].is_boolean())
+		{
+			LOG_ERROR("failed to deserialize 'config_data_t' (m_use_usermode_driver is not a bool)");
+			return {};
+		}
+
+		config_data.m_use_usermode_driver = parsed_data["m_use_usermode_driver"].get<bool>();
 	}
 
 	return true;
