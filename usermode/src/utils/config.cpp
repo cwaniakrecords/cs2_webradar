@@ -14,10 +14,10 @@ bool cfg::setup(config_data_t& config_data)
 		LOG_WARNING("cannot open file 'config.json'");
 
 		std::ofstream example_config("config.json");
-		example_config << std::format("{}", R"({
+		example_config << std::format(R"({
     "m_ip": "localhost",
-    "m_use_usermode_driver": false
-})");
+    "m_use_usermode_driver": {}
+})", config_data.m_use_usermode_driver ? "true" : "false");
 
 		return {};
 	}
@@ -29,23 +29,17 @@ bool cfg::setup(config_data_t& config_data)
 		return {};
 	}
 
-	if (!parsed_data.contains("m_ip") || !parsed_data["m_ip"].is_string())
+	try
 	{
-		LOG_ERROR("failed to deserialize 'config_data_t' (invalid or missing m_ip)");
-		return {};
+		config_data.m_ip = parsed_data.at("m_ip").get<std::string>();
+
+		if (parsed_data.contains("m_use_usermode_driver"))
+			config_data.m_use_usermode_driver = parsed_data.at("m_use_usermode_driver").get<bool>();
 	}
-
-	config_data.m_ip = parsed_data["m_ip"].get<std::string>();
-
-	if (parsed_data.contains("m_use_usermode_driver"))
+	catch (const std::exception& e)
 	{
-		if (!parsed_data["m_use_usermode_driver"].is_boolean())
-		{
-			LOG_ERROR("failed to deserialize 'config_data_t' (m_use_usermode_driver is not a bool)");
-			return {};
-		}
-
-		config_data.m_use_usermode_driver = parsed_data["m_use_usermode_driver"].get<bool>();
+		LOG_ERROR("failed to deserialize 'config_data_t' (%s)", e.what());
+		return {};
 	}
 
 	return true;

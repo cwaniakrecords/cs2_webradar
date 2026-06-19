@@ -48,7 +48,7 @@ bool c_usermode_driver::read_memory(uintptr_t address, void* buffer, size_t size
 	{
 		ULONG bytes_read = 0;
 		const auto status = this->m_nt_read_virtual_memory(this->m_process_handle, reinterpret_cast<PVOID>(address), buffer, static_cast<ULONG>(size), &bytes_read);
-		return status >= 0 && bytes_read == size;
+		return NT_SUCCESS(status) && bytes_read == size;
 	}
 
 	return ReadProcessMemory(this->m_process_handle, reinterpret_cast<LPCVOID>(address), buffer, size, nullptr) != FALSE;
