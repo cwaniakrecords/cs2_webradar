@@ -16,6 +16,16 @@ const PUBLIC_IP = "your ip goes here".trim();
 const PORT = 22006;
 
 const EFFECTIVE_IP = USE_LOCALHOST ? "localhost" : PUBLIC_IP.match(/[a-zA-Z]/) ? window.location.hostname : PUBLIC_IP;
+const MAP_NAME_REGEX = /^[a-z0-9_]+$/i;
+
+const normalizeMapName = (mapName) => {
+  if (typeof mapName !== "string") return null;
+
+  const normalized = mapName.trim();
+  if (!normalized || !MAP_NAME_REGEX.test(normalized)) return null;
+
+  return normalized;
+};
 
 const DEFAULT_SETTINGS = {
   dotSize: 1,
@@ -98,8 +108,8 @@ const App = () => {
         setLocalTeam(parsedData.m_local_team);
         setBombData(parsedData.m_bomb);
 
-        const map = parsedData.m_map;
-        if (map !== "invalid") {
+        const map = normalizeMapName(parsedData.m_map);
+        if (map && map !== "invalid") {
           setMapData({
             ...(await (await fetch(`data/${map}/data.json`)).json()),
             name: map,
