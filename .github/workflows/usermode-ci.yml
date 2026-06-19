@@ -15,8 +15,6 @@ jobs:
     runs-on: windows-latest
     permissions:
       contents: read
-    env:
-      VCPKG_INSTALLED_DIR: ${{ github.workspace }}/usermode/vcpkg_installed
     strategy:
       fail-fast: false
       matrix:
@@ -38,7 +36,7 @@ jobs:
       - name: Build usermode
         shell: pwsh
         run: |
-          msbuild usermode/cs2_webradar.sln /m /p:Configuration=${{ matrix.configuration }} /p:Platform=x64 /p:VcpkgInstalledDir="$env:VCPKG_INSTALLED_DIR" /bl:usermode/build-${{ matrix.configuration }}.binlog
+          msbuild usermode/cs2_webradar.sln /m /p:Configuration=${{ matrix.configuration }} /p:Platform=x64 /p:VcpkgRoot="$env:VCPKG_ROOT" /bl:usermode/build-${{ matrix.configuration }}.binlog
 
       - name: Upload build logs
         if: always()
