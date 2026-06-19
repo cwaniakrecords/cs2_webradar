@@ -7,18 +7,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ext\curl\curl.h" />
-    <ClInclude Include="ext\curl\curlver.h" />
-    <ClInclude Include="ext\curl\easy.h" />
-    <ClInclude Include="ext\curl\header.h" />
-    <ClInclude Include="ext\curl\mprintf.h" />
-    <ClInclude Include="ext\curl\multi.h" />
-    <ClInclude Include="ext\curl\options.h" />
-    <ClInclude Include="ext\curl\stdcheaders.h" />
-    <ClInclude Include="ext\curl\system.h" />
-    <ClInclude Include="ext\curl\typecheck-gcc.h" />
-    <ClInclude Include="ext\curl\urlapi.h" />
-    <ClInclude Include="ext\curl\websockets.h" />
     <ClInclude Include="src\utils\fnv1a.hpp" />
     <ClInclude Include="src\common.hpp" />
     <ClInclude Include="src\core\interfaces.hpp" />
@@ -29,7 +17,6 @@
     <ClInclude Include="src\sdk\interfaces\schema_system.hpp" />
     <ClInclude Include="src\core\schema.hpp" />
     <ClInclude Include="src\sdk\datatypes\utl_ts_hash.hpp" />
-    <ClInclude Include="src\driver\driver.hpp" />
     <ClInclude Include="src\sdk\interfaces\game_entity_system.hpp" />
     <ClInclude Include="src\sdk\interfaces\global_vars.hpp" />
     <ClInclude Include="src\features\features.hpp" />
