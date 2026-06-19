@@ -14,10 +14,10 @@ bool cfg::setup(config_data_t& config_data)
 		LOG_WARNING("cannot open file 'config.json'");
 
 		std::ofstream example_config("config.json");
-		example_config << std::format(R"({
+		example_config << std::format(R"({{
     "m_ip": "localhost",
     "m_use_usermode_driver": {}
-})", config_data.m_use_usermode_driver ? "true" : "false");
+}})", config_data.m_use_usermode_driver ? "true" : "false");
 
 		return {};
 	}
