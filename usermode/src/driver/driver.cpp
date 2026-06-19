@@ -21,7 +21,10 @@ bool c_usermode_driver::initialize(uint32_t process_id, usermode_backend_t backe
 	{
 		const auto ntdll_module = GetModuleHandleW(L"ntdll.dll");
 		if (ntdll_module == nullptr)
+		{
+			this->reset();
 			return false;
+		}
 
 		this->m_nt_read_virtual_memory = reinterpret_cast<nt_read_virtual_memory_t>(GetProcAddress(ntdll_module, "NtReadVirtualMemory"));
 		if (this->m_nt_read_virtual_memory == nullptr)
