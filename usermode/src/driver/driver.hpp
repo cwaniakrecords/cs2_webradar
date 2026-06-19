@@ -1,5 +1,7 @@
 #pragma once
 
+#include <winternl.h>
+
 enum class usermode_backend_t
 {
 	winapi = 0,
