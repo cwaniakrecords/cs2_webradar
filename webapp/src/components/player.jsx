@@ -16,17 +16,13 @@ const calculatePlayerRotation = (eyeAngle, previousRotation) => {
 
 const Player = ({ playerData, mapData, radarImage, localTeam, settings }) => {
   const [lastKnownPosition, setLastKnownPosition] = useState(null);
+  const [playerRotation, setPlayerRotation] = useState(0);
   const radarPosition = getRadarPosition(mapData, playerData.m_position) || { x: 0, y: 0 };
   const invalidPosition = radarPosition.x <= 0 && radarPosition.y <= 0;
 
   const playerRef = useRef();
-  const rotationRef = useRef(0);
   const playerBounding = (playerRef.current &&
     playerRef.current.getBoundingClientRect()) || { width: 0, height: 0 };
-  const playerRotation = Number.isFinite(playerData.m_eye_angle)
-    ? calculatePlayerRotation(playerData.m_eye_angle, rotationRef.current)
-    : rotationRef.current;
-  rotationRef.current = playerRotation;
 
   const radarImageBounding = (radarImage !== undefined &&
     radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
@@ -43,6 +39,16 @@ const Player = ({ playerData, mapData, radarImage, localTeam, settings }) => {
       setLastKnownPosition(null);
     }
   }, [playerData.m_is_dead, radarPosition, lastKnownPosition]);
+
+  useEffect(() => {
+    if (!Number.isFinite(playerData.m_eye_angle)) {
+      return;
+    }
+
+    setPlayerRotation((previousRotation) =>
+      calculatePlayerRotation(playerData.m_eye_angle, previousRotation)
+    );
+  }, [playerData.m_eye_angle]);
 
   const effectivePosition = playerData.m_is_dead ? lastKnownPosition || { x: 0, y: 0 } : radarPosition;
 

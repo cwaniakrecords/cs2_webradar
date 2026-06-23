@@ -27,8 +27,14 @@ const loadSettings = () => {
   return savedSettings ? JSON.parse(savedSettings) : DEFAULT_SETTINGS;
 };
 
-const sanitizeMapName = (map) =>
-  typeof map === "string" && /^[a-z0-9_]+$/i.test(map) ? map : null;
+const sanitizeMapName = (map) => {
+  if (typeof map !== "string") {
+    return null;
+  }
+
+  const normalizedMapName = map.toLowerCase();
+  return /^[a-z0-9_]+$/.test(normalizedMapName) ? normalizedMapName : null;
+};
 
 const App = () => {
   const [playerArray, setPlayerArray] = useState([]);
