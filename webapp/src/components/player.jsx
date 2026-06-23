@@ -1,28 +1,20 @@
 import { useRef, useState, useEffect } from "react";
-import { getRadarPosition, playerColors } from "../utilities/utilities";
-
-
-let playerRotations = [];
-const calculatePlayerRotation = (playerData) => {
-  const playerViewAngle = 270 - playerData.m_eye_angle;
-  const idx = playerData.m_idx;
-
-  playerRotations[idx] = (playerRotations[idx] || 0) % 360;
-  playerRotations[idx] +=
-    ((playerViewAngle - playerRotations[idx] + 540) % 360) - 180;
-
-  return playerRotations[idx];
-};
+import {
+  getPlayerMarkerRotation,
+  getRadarPosition,
+  getSmoothedRotation,
+  playerColors,
+} from "../utilities/utilities";
 
 const Player = ({ playerData, mapData, radarImage, localTeam, settings }) => {
   const [lastKnownPosition, setLastKnownPosition] = useState(null);
+  const [playerRotation, setPlayerRotation] = useState(0);
   const radarPosition = getRadarPosition(mapData, playerData.m_position) || { x: 0, y: 0 };
   const invalidPosition = radarPosition.x <= 0 && radarPosition.y <= 0;
 
   const playerRef = useRef();
   const playerBounding = (playerRef.current &&
     playerRef.current.getBoundingClientRect()) || { width: 0, height: 0 };
-  const playerRotation = calculatePlayerRotation(playerData);
 
   const radarImageBounding = (radarImage !== undefined &&
     radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
@@ -39,6 +31,23 @@ const Player = ({ playerData, mapData, radarImage, localTeam, settings }) => {
       setLastKnownPosition(null);
     }
   }, [playerData.m_is_dead, radarPosition, lastKnownPosition]);
+
+  useEffect(() => {
+    if (
+      typeof playerData.m_eye_angle !== "number" ||
+      !Number.isFinite(playerData.m_eye_angle)
+    ) {
+      return;
+    }
+
+    setPlayerRotation((previousRotation) =>
+      getSmoothedRotation(
+        // CS2 yaw 0 faces east/right on the radar, while the marker shape points down by default.
+        getPlayerMarkerRotation(playerData.m_eye_angle),
+        previousRotation
+      )
+    );
+  }, [playerData.m_eye_angle]);
 
   const effectivePosition = playerData.m_is_dead ? lastKnownPosition || { x: 0, y: 0 } : radarPosition;
 

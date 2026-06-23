@@ -1,8 +1,8 @@
 import ReactDOM from "react-dom/client";
-import { useEffect, useState } from "react";
-import "./App.css";
-import PlayerCard from "./components/PlayerCard";
-import Radar from "./components/Radar";
+import { useEffect, useMemo, useState } from "react";
+import "./app.css";
+import PlayerCard from "./components/playercard";
+import Radar from "./components/radar";
 import SettingsButton from "./components/settings";
 import MaskedIcon from "./components/maskedicon";
 
@@ -27,6 +27,33 @@ const loadSettings = () => {
   return savedSettings ? JSON.parse(savedSettings) : DEFAULT_SETTINGS;
 };
 
+const sanitizeMapName = (map) => {
+  if (typeof map !== "string") {
+    return null;
+  }
+
+  let decodedMapName = map;
+  try {
+    decodedMapName = decodeURIComponent(map);
+  } catch {
+    return null;
+  }
+
+  if (
+    decodedMapName.includes("..") ||
+    decodedMapName.includes("/") ||
+    decodedMapName.includes("\\")
+  ) {
+    return null;
+  }
+
+  const normalizedMapName = decodedMapName.toLowerCase();
+  return /^[a-z0-9_]+$/.test(normalizedMapName) &&
+    normalizedMapName.length <= 50
+    ? normalizedMapName
+    : null;
+};
+
 const App = () => {
   const [playerArray, setPlayerArray] = useState([]);
   const [mapData, setMapData] = useState();
@@ -34,6 +61,10 @@ const App = () => {
   const [bombData, setBombData] = useState();
   const [settings, setSettings] = useState(loadSettings());
   const [bannerOpened, setBannerOpened] = useState(true)
+  const localPlayer = useMemo(
+    () => playerArray.find((player) => player.m_is_local),
+    [playerArray]
+  );
 
   // Save settings to local storage whenever they change
   useEffect(() => {
@@ -98,8 +129,12 @@ const App = () => {
         setLocalTeam(parsedData.m_local_team);
         setBombData(parsedData.m_bomb);
 
-        const map = parsedData.m_map;
-        if (map !== "invalid") {
+        const map = sanitizeMapName(parsedData.m_map);
+        if (!map && parsedData.m_map !== "invalid") {
+          console.warn("received invalid map name from websocket payload:", parsedData.m_map);
+        }
+
+        if (map && map !== "invalid") {
           setMapData({
             ...(await (await fetch(`data/${map}/data.json`)).json()),
             name: map,
@@ -180,6 +215,7 @@ const App = () => {
               radarImage={`./data/${mapData.name}/radar.png`}
               mapData={mapData}
               localTeam={localTeam}
+              localPlayer={localPlayer}
               bombData={bombData}
               settings={settings}
             />
