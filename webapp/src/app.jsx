@@ -102,6 +102,10 @@ const App = () => {
         setBombData(parsedData.m_bomb);
 
         const map = sanitizeMapName(parsedData.m_map);
+        if (!map && parsedData.m_map !== "invalid") {
+          console.warn("received invalid map name from websocket payload");
+        }
+
         if (map && map !== "invalid") {
           setMapData({
             ...(await (await fetch(`data/${map}/data.json`)).json()),
