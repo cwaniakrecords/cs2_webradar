@@ -27,6 +27,9 @@ const loadSettings = () => {
   return savedSettings ? JSON.parse(savedSettings) : DEFAULT_SETTINGS;
 };
 
+const sanitizeMapName = (map) =>
+  typeof map === "string" && /^[a-z0-9_]+$/i.test(map) ? map : null;
+
 const App = () => {
   const [playerArray, setPlayerArray] = useState([]);
   const [mapData, setMapData] = useState();
@@ -98,8 +101,8 @@ const App = () => {
         setLocalTeam(parsedData.m_local_team);
         setBombData(parsedData.m_bomb);
 
-        const map = parsedData.m_map;
-        if (map !== "invalid") {
+        const map = sanitizeMapName(parsedData.m_map);
+        if (map && map !== "invalid") {
           setMapData({
             ...(await (await fetch(`data/${map}/data.json`)).json()),
             name: map,
