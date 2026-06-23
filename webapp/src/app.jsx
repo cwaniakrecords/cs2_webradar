@@ -32,12 +32,26 @@ const sanitizeMapName = (map) => {
     return null;
   }
 
-  if (map.includes("..") || map.includes("/") || map.includes("\\")) {
+  let decodedMapName = map;
+  try {
+    decodedMapName = decodeURIComponent(map);
+  } catch {
     return null;
   }
 
-  const normalizedMapName = map.toLowerCase();
-  return /^[a-z0-9_]+$/.test(normalizedMapName) ? normalizedMapName : null;
+  if (
+    decodedMapName.includes("..") ||
+    decodedMapName.includes("/") ||
+    decodedMapName.includes("\\")
+  ) {
+    return null;
+  }
+
+  const normalizedMapName = decodedMapName.toLowerCase();
+  return /^[a-z0-9_]+$/.test(normalizedMapName) &&
+    normalizedMapName.length <= 50
+    ? normalizedMapName
+    : null;
 };
 
 const App = () => {

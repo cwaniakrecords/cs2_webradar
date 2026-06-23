@@ -43,7 +43,10 @@ const Player = ({ playerData, mapData, radarImage, localTeam, settings }) => {
   }, [playerData.m_is_dead, radarPosition, lastKnownPosition]);
 
   useEffect(() => {
-    if (!Number.isFinite(playerData.m_eye_angle)) {
+    if (
+      typeof playerData.m_eye_angle !== "number" ||
+      !Number.isFinite(playerData.m_eye_angle)
+    ) {
       return;
     }
 
