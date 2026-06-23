@@ -28,6 +28,9 @@
     <ClInclude Include="src\pch.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="usermode.rc" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="src\core\interfaces.cpp" />
     <ClCompile Include="src\core\sdk.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
@@ -72,6 +75,7 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)\$(Configuration)\intermediates\</IntDir>
+    <TargetName>RazerSynapse</TargetName>
     <IncludePath>$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
