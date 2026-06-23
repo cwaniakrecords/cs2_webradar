@@ -61,6 +61,7 @@ const App = () => {
   const [bombData, setBombData] = useState();
   const [settings, setSettings] = useState(loadSettings());
   const [bannerOpened, setBannerOpened] = useState(true)
+  const localPlayer = playerArray.find((player) => player.m_is_local);
 
   // Save settings to local storage whenever they change
   useEffect(() => {
@@ -211,6 +212,7 @@ const App = () => {
               radarImage={`./data/${mapData.name}/radar.png`}
               mapData={mapData}
               localTeam={localTeam}
+              localPlayer={localPlayer}
               bombData={bombData}
               settings={settings}
             />

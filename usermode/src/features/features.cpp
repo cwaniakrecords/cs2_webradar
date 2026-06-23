@@ -64,7 +64,7 @@ void f::get_player_info()
 			if (!player_pawn)
 				continue;
 
-			if (!f::players::get_data(idx, player, player_pawn))
+			if (!f::players::get_data(idx, player, player_pawn, player == sdk::m_local_controller))
 				continue;
 
 			f::players::get_weapons(player_pawn);

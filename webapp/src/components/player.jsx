@@ -1,20 +1,10 @@
 import { useRef, useState, useEffect } from "react";
-import { getRadarPosition, playerColors } from "../utilities/utilities";
-
-
-const normalizeAngle = (angle) => ((angle % 360) + 360) % 360;
-
-const calculatePlayerRotation = (eyeAngle, previousRotation) => {
-  // CS2 yaw 0 faces east/right on the radar, while the marker shape points down by default.
-  const targetRotation = normalizeAngle(eyeAngle + 90);
-  const normalizedPreviousRotation = normalizeAngle(previousRotation);
-
-  return (
-    normalizedPreviousRotation +
-    // Move to the new heading through the shortest angular distance to avoid full spins at 0/360 wraparound.
-    (((targetRotation - normalizedPreviousRotation + 540) % 360) - 180)
-  );
-};
+import {
+  getPlayerMarkerRotation,
+  getRadarPosition,
+  getSmoothedRotation,
+  playerColors,
+} from "../utilities/utilities";
 
 const Player = ({ playerData, mapData, radarImage, localTeam, settings }) => {
   const [lastKnownPosition, setLastKnownPosition] = useState(null);
@@ -51,7 +41,11 @@ const Player = ({ playerData, mapData, radarImage, localTeam, settings }) => {
     }
 
     setPlayerRotation((previousRotation) =>
-      calculatePlayerRotation(playerData.m_eye_angle, previousRotation)
+      getSmoothedRotation(
+        // CS2 yaw 0 faces east/right on the radar, while the marker shape points down by default.
+        getPlayerMarkerRotation(playerData.m_eye_angle),
+        previousRotation
+      )
     );
   }, [playerData.m_eye_angle]);
 

@@ -1,6 +1,6 @@
 #include "pch.hpp"
 
-bool f::players::get_data(int32_t idx, c_cs_player_controller* player, c_cs_player_pawn* player_pawn)
+bool f::players::get_data(int32_t idx, c_cs_player_controller* player, c_cs_player_pawn* player_pawn, bool is_local_player)
 {
 	const auto health = player_pawn->m_iHealth();
 	const auto is_dead = health <= 0;
@@ -13,6 +13,7 @@ bool f::players::get_data(int32_t idx, c_cs_player_controller* player, c_cs_play
 	m_player_data["m_team"] = team;
 	m_player_data["m_health"] = health;
 	m_player_data["m_is_dead"] = is_dead;
+	m_player_data["m_is_local"] = is_local_player;
 	m_player_data["m_model_name"] = player_pawn->get_model_name();
 	m_player_data["m_steam_id"] = std::to_string(player->m_steamID());
 	m_player_data["m_money"] = player->m_pInGameMoneyServices()->m_iAccount();

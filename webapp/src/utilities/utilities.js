@@ -1,9 +1,18 @@
+const hasFiniteCoordinatePair = (coords) =>
+  coords &&
+  Number.isFinite(coords.x) &&
+  Number.isFinite(coords.y);
+
 export const getRadarPosition = (mapData, entityCoords) => {
-  if (!entityCoords.x || !entityCoords.y) {
+  if (!hasFiniteCoordinatePair(entityCoords)) {
     return { x: 0, y: 0 };
   }
 
-  if (!mapData.x || !mapData.y) {
+  if (
+    !hasFiniteCoordinatePair(mapData) ||
+    !Number.isFinite(mapData.scale) ||
+    mapData.scale === 0
+  ) {
     return { x: 0, y: 0 };
   }
 
@@ -14,6 +23,20 @@ export const getRadarPosition = (mapData, entityCoords) => {
 
   return position;
 };
+
+export const normalizeAngle = (angle) => ((angle % 360) + 360) % 360;
+
+export const getSmoothedRotation = (targetRotation, previousRotation) => {
+  const normalizedTargetRotation = normalizeAngle(targetRotation);
+  const normalizedPreviousRotation = normalizeAngle(previousRotation);
+
+  return (
+    normalizedPreviousRotation +
+    (((normalizedTargetRotation - normalizedPreviousRotation + 540) % 360) - 180)
+  );
+};
+
+export const getPlayerMarkerRotation = (eyeAngle) => normalizeAngle(eyeAngle + 90);
 
 export const playerColors = [
   // blue
