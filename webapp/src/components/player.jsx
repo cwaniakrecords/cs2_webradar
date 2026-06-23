@@ -5,11 +5,13 @@ import { getRadarPosition, playerColors } from "../utilities/utilities";
 const normalizeAngle = (angle) => ((angle % 360) + 360) % 360;
 
 const calculatePlayerRotation = (eyeAngle, previousRotation) => {
+  // CS2 yaw 0 faces east/right on the radar, while the marker shape points down by default.
   const targetRotation = normalizeAngle(eyeAngle + 90);
   const normalizedPreviousRotation = normalizeAngle(previousRotation);
 
   return (
     normalizedPreviousRotation +
+    // Move to the new heading through the shortest angular distance to avoid full spins at 0/360 wraparound.
     (((targetRotation - normalizedPreviousRotation + 540) % 360) - 180)
   );
 };

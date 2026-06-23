@@ -32,6 +32,10 @@ const sanitizeMapName = (map) => {
     return null;
   }
 
+  if (map.includes("..") || map.includes("/") || map.includes("\\")) {
+    return null;
+  }
+
   const normalizedMapName = map.toLowerCase();
   return /^[a-z0-9_]+$/.test(normalizedMapName) ? normalizedMapName : null;
 };
@@ -109,7 +113,7 @@ const App = () => {
 
         const map = sanitizeMapName(parsedData.m_map);
         if (!map && parsedData.m_map !== "invalid") {
-          console.warn("received invalid map name from websocket payload");
+          console.warn("received invalid map name from websocket payload:", parsedData.m_map);
         }
 
         if (map && map !== "invalid") {
