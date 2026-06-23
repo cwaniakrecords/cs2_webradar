@@ -32,6 +32,7 @@ export const getSmoothedRotation = (targetRotation, previousRotation) => {
 
   return (
     normalizedPreviousRotation +
+    // Rotate through the shortest arc so headings stay smooth when crossing 0/360.
     (((normalizedTargetRotation - normalizedPreviousRotation + 540) % 360) - 180)
   );
 };

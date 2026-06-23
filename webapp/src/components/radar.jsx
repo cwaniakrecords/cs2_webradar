@@ -28,6 +28,7 @@ const Radar = ({
 
     setRadarRotation((previousRotation) =>
       getSmoothedRotation(
+        // Rotate the full radar so the local player's marker stays pointed upward.
         180 - getPlayerMarkerRotation(localPlayer.m_eye_angle),
         previousRotation
       )

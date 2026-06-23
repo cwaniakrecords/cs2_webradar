@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom/client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./app.css";
 import PlayerCard from "./components/playercard";
 import Radar from "./components/radar";
@@ -61,7 +61,10 @@ const App = () => {
   const [bombData, setBombData] = useState();
   const [settings, setSettings] = useState(loadSettings());
   const [bannerOpened, setBannerOpened] = useState(true)
-  const localPlayer = playerArray.find((player) => player.m_is_local);
+  const localPlayer = useMemo(
+    () => playerArray.find((player) => player.m_is_local),
+    [playerArray]
+  );
 
   // Save settings to local storage whenever they change
   useEffect(() => {
