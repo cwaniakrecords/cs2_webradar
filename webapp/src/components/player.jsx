@@ -2,16 +2,16 @@ import { useRef, useState, useEffect } from "react";
 import { getRadarPosition, playerColors } from "../utilities/utilities";
 
 
-let playerRotations = [];
-const calculatePlayerRotation = (playerData) => {
-  const playerViewAngle = 270 - playerData.m_eye_angle;
-  const idx = playerData.m_idx;
+const normalizeAngle = (angle) => ((angle % 360) + 360) % 360;
 
-  playerRotations[idx] = (playerRotations[idx] || 0) % 360;
-  playerRotations[idx] +=
-    ((playerViewAngle - playerRotations[idx] + 540) % 360) - 180;
+const calculatePlayerRotation = (eyeAngle, previousRotation) => {
+  const targetRotation = normalizeAngle(eyeAngle + 90);
+  const normalizedPreviousRotation = normalizeAngle(previousRotation);
 
-  return playerRotations[idx];
+  return (
+    normalizedPreviousRotation +
+    (((targetRotation - normalizedPreviousRotation + 540) % 360) - 180)
+  );
 };
 
 const Player = ({ playerData, mapData, radarImage, localTeam, settings }) => {
@@ -20,9 +20,13 @@ const Player = ({ playerData, mapData, radarImage, localTeam, settings }) => {
   const invalidPosition = radarPosition.x <= 0 && radarPosition.y <= 0;
 
   const playerRef = useRef();
+  const rotationRef = useRef(0);
   const playerBounding = (playerRef.current &&
     playerRef.current.getBoundingClientRect()) || { width: 0, height: 0 };
-  const playerRotation = calculatePlayerRotation(playerData);
+  const playerRotation = Number.isFinite(playerData.m_eye_angle)
+    ? calculatePlayerRotation(playerData.m_eye_angle, rotationRef.current)
+    : rotationRef.current;
+  rotationRef.current = playerRotation;
 
   const radarImageBounding = (radarImage !== undefined &&
     radarImage.getBoundingClientRect()) || { width: 0, height: 0 };
