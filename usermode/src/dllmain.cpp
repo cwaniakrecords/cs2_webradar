@@ -4,7 +4,7 @@ bool main()
 {
     config_data_t config_data = {};
     INIT_STEP("config system", cfg::setup(config_data));
-    INIT_STEP("memory", m_memory->setup());
+    INIT_STEP("memory", m_memory->setup(config_data.m_use_usermode_driver));
     INIT_STEP("interfaces", i::setup());
     INIT_STEP("schema", schema::setup());
 

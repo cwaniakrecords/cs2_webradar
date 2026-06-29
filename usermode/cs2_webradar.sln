@@ -8,10 +8,13 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		release|x64 = release|x64
+		release_privacy|x64 = release_privacy|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6A55EA2E-776D-410E-B7F1-DEA56E9BDFCD}.release|x64.ActiveCfg = release|x64
 		{6A55EA2E-776D-410E-B7F1-DEA56E9BDFCD}.release|x64.Build.0 = release|x64
+		{6A55EA2E-776D-410E-B7F1-DEA56E9BDFCD}.release_privacy|x64.ActiveCfg = release_privacy|x64
+		{6A55EA2E-776D-410E-B7F1-DEA56E9BDFCD}.release_privacy|x64.Build.0 = release_privacy|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

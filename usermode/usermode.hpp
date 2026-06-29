@@ -18,6 +18,9 @@
 /* root */
 #include "common.hpp"
 
+/* driver */
+#include "driver/driver.hpp"
+
 /* utils */
 #include "utils/config.hpp"
 #include "utils/address.hpp"

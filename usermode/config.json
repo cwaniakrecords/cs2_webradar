@@ -1,3 +1,4 @@
 {
-    "m_ip": "localhost"
+    "m_ip": "localhost",
+    "m_use_usermode_driver": true
 }

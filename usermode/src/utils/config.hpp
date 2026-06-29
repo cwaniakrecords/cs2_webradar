@@ -2,9 +2,8 @@
 
 struct config_data_t
 {
-	std::string m_ip;
-
-	NLOHMANN_DEFINE_TYPE_INTRUSIVE(config_data_t, m_ip)
+	std::string m_ip = "localhost";
+	bool m_use_usermode_driver = false;
 };
 
 namespace cfg

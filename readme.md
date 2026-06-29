@@ -19,6 +19,17 @@ Undetected Counter-Strike 2 browser-based radar cheat
 - In visual studio's toolbar, hover on `Build` and press `Build Solution` or press `Ctrl + Shift + B`
 - In `release` folder, run `usermode.exe` and, in your browser navigate to `localhost:5173` <br>
 
+## Build variants
+- `release|x64` -> `usermode.exe` (default)
+- `release_privacy|x64` -> `usermode_privacy.exe` (enables usermode privacy backend by default)
+
+Set `"m_use_usermode_driver": true` in `usermode/config.json` to force the usermode privacy backend.
+
+## CI and troubleshooting
+- `Webapp CI` validates dependency install and production build for `webapp`.
+- `Usermode CI` builds both usermode variants on Windows (`release` + `release_privacy`).
+- Usermode CI always uploads MSBuild `.binlog` artifacts, which can be downloaded and opened in Visual Studio/MSBuild Structured Log Viewer for troubleshooting.
+
 ## Sharing
 > [!TIP]
 > For easier sharing, consider **[hurracan](https://hurracan.com)** which handles this automatically.

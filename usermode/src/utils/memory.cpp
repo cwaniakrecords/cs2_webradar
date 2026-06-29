@@ -1,6 +1,6 @@
 #include "pch.hpp"
 
-bool c_memory::setup()
+bool c_memory::setup(bool use_usermode_driver)
 {
 	const auto process_id = this->get_process_id("cs2.exe");
 	if (!process_id.has_value())
@@ -10,8 +10,22 @@ bool c_memory::setup()
 	}
 
 	this->m_id = process_id.value();
-	this->m_handle = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, false, this->m_id);
+	this->m_use_usermode_driver = false;
 
+	if (use_usermode_driver)
+	{
+		if (this->m_usermode_driver.initialize(this->m_id, usermode_backend_t::ntdll))
+		{
+			this->m_use_usermode_driver = true;
+			LOG_INFO("using usermode driver backend: ntdll");
+		}
+		else
+		{
+			LOG_WARNING("failed to initialize ntdll backend, falling back to ReadProcessMemory");
+		}
+	}
+
+	this->m_handle = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, false, this->m_id);
 	return this->m_handle != nullptr;
 }
 
